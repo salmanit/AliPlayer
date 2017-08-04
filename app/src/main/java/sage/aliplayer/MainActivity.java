@@ -13,7 +13,6 @@ import sage.libaliplayer.player.AliVideoPlayerManager;
 public class MainActivity extends AppCompatActivity {
 
     String url="http://livecdn.video.taobao.com/temp/test1466295255657-65e172e6-1b96-4660-9f2f-1aba576d84e8.m3u8";
-    String url2="http://10.0.2.53:8380/media/videos/20161108180726.mp4";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,10 +24,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }) ;
         AliVideoPlayer aliVideoPlayer= (AliVideoPlayer) findViewById(R.id.ali_player);
-        aliVideoPlayer.setUrl(url2);
+        aliVideoPlayer.setUrl(url);
 
         AliVideoPlayer aliVideoPlayer2= (AliVideoPlayer) findViewById(R.id.ali_player2);
-        aliVideoPlayer2.setUrl(url2);
+        aliVideoPlayer2.setUrl(url);
     }
 
     @Override
