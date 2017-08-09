@@ -3,6 +3,7 @@ package sage.libaliplayer.player;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
@@ -50,8 +51,8 @@ public class AliVideoPlayer extends FrameLayout
     private AliVcMediaPlayer mMediaPlayer;
 
     private int mBufferPercentage;
-//    private AudioManager manager;
-
+    private boolean hiddenTime;
+    
     public AliVideoPlayer(Context context) {
         this(context, null);
     }
@@ -69,13 +70,22 @@ public class AliVideoPlayer extends FrameLayout
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         this.addView(mContainer, params);
-        setController(new AliVideoPlayerController(mContext));
+        setController(mController =new AliVideoPlayerController(mContext));
 
     }
 
-
+    public void setUrl(String url,boolean hiddenTime){
+        setUrl(url);
+        this.hiddenTime=hiddenTime;
+    }
     public void setUrl(String url) {
         mUrl = url;
+        if(TextUtils.isEmpty(mUrl)){
+            return;
+        }
+        if(mController!=null){
+            mController.showCenterPlayUi();
+        }
     }
 
     public AliVideoPlayerController getmController() {
@@ -123,14 +133,14 @@ public class AliVideoPlayer extends FrameLayout
     private MediaPlayer.MediaPlayerSeekCompleteListener  seekCompleteListener=new MediaPlayer.MediaPlayerSeekCompleteListener() {
         @Override
         public void onSeekCompleted() {
-            System.out.println("onSeekCompleted=================");
+            DebugLogUtil.i("onSeekCompleted=================");
         }
     };
 
     private MediaPlayer.MediaPlayerCompletedListener completedListener=new MediaPlayer.MediaPlayerCompletedListener() {
         @Override
         public void onCompleted() {
-            System.out.println("onCompleted=================");
+            DebugLogUtil.i("onCompleted=================");
             mCurrentState = STATE_COMPLETED;
             mController.setControllerState(mPlayerState, mCurrentState);
             AliVideoPlayerManager.instance().setCurrentNiceVideoPlayer(null);
@@ -139,14 +149,14 @@ public class AliVideoPlayer extends FrameLayout
     private MediaPlayer.MediaPlayerVideoSizeChangeListener videoSizeChangeListener=new MediaPlayer.MediaPlayerVideoSizeChangeListener() {
         @Override
         public void onVideoSizeChange(int i, int i1) {
-            System.out.println("onVideoSizeChange=================="+i+"/"+i1);
+            DebugLogUtil.i("onVideoSizeChange=================="+i+"/"+i1);
         }
     };
 
     private MediaPlayer.MediaPlayerBufferingUpdateListener bufferingUpdateListener=new MediaPlayer.MediaPlayerBufferingUpdateListener() {
         @Override
         public void onBufferingUpdateListener(int i) {
-            System.out.println("onBufferingUpdateListener==================="+i);
+            DebugLogUtil.i("onBufferingUpdateListener==================="+i);
             mBufferPercentage = i;
         }
     };
@@ -157,7 +167,7 @@ public class AliVideoPlayer extends FrameLayout
                 @Override
                 public void surfaceCreated(SurfaceHolder holder) {
                     holder.setKeepScreenOn(true);
-                    System.out.println("surfaceCreated============="+holder.isCreating());
+                    DebugLogUtil.i("surfaceCreated============="+holder.isCreating());
                     if (mMediaPlayer != null) {
                         // 对于从后台切换到前台,需要重设surface;部分手机锁屏也会做前后台切换的处理
                         mMediaPlayer.setVideoSurface(mSurfaceView.getHolder().getSurface());
@@ -169,14 +179,14 @@ public class AliVideoPlayer extends FrameLayout
 
                 @Override
                 public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-                    System.out.println("surfaceChanged============"+width+"/"+height);
+                    DebugLogUtil.i("surfaceChanged============"+width+"/"+height);
                     if (mMediaPlayer != null)
                         mMediaPlayer.setSurfaceChanged();
                 }
 
                 @Override
                 public void surfaceDestroyed(SurfaceHolder holder) {
-                    System.out.println("surfaceDestroyed===============");
+                    DebugLogUtil.i("surfaceDestroyed===============");
                     if (mMediaPlayer != null)
                         mMediaPlayer.releaseVideoSurface();
                 }
@@ -195,6 +205,9 @@ public class AliVideoPlayer extends FrameLayout
     }
     @Override
     public void start() {
+        if(TextUtils.isEmpty(mUrl)){
+            return;
+        }
         AliVideoPlayerManager.instance().releaseNiceVideoPlayer();
         AliVideoPlayerManager.instance().setCurrentNiceVideoPlayer(this);
         if (mCurrentState == STATE_IDLE
@@ -319,7 +332,7 @@ public class AliVideoPlayer extends FrameLayout
 
     private class VideoInfolistener implements AliVcMediaPlayer.MediaPlayerInfoListener {
         public void onInfo(int what, int extra){
-            System.out.println("MediaPlayerInfoListener=========="+what);
+            DebugLogUtil.i("MediaPlayerInfoListener=========="+what);
             switch (what)
             {
                 case MediaPlayer.MEDIA_INFO_UNKNOW:
@@ -359,16 +372,21 @@ public class AliVideoPlayer extends FrameLayout
         @Override
         public void onPrepared() {
             //更新视频总进度
-            System.out.println("onPrepared=========");
+            DebugLogUtil.i("onPrepared=========");
             mCurrentState = STATE_PREPARED;
             mController.setControllerState(mPlayerState, mCurrentState);
             thisWidth=getWidth();
             thisHeight=getHeight();
+            if(hiddenTime){
+                if(mController!=null){
+                    mController.hiddenTime();
+                }
+            }
         } }
 
     private class VideoErrorListener implements AliVcMediaPlayer.MediaPlayerErrorListener {
         public void onError(int what, int extra) {
-            System.out.println("onError========="+what);
+            DebugLogUtil.i("onError========="+what);
             mCurrentState = STATE_ERROR;
             mController.setControllerState(mPlayerState, mCurrentState);
             switch(what)
@@ -423,8 +441,8 @@ public class AliVideoPlayer extends FrameLayout
                 params.height=ViewGroup.LayoutParams.MATCH_PARENT;
             }
         mSurfaceView.setLayoutParams(params);
-        System.out.println("width===="+(videoWidth*1f/videoHeight+"**********"+width*1f/height));
-        System.out.println(videoWidth+"/"+videoHeight+"==width======"+width+"/"+height+"===="+params.width+"/"+params.height);
+        DebugLogUtil.i("width===="+(videoWidth*1f/videoHeight+"**********"+width*1f/height));
+        DebugLogUtil.i(videoWidth+"/"+videoHeight+"==width======"+width+"/"+height+"===="+params.width+"/"+params.height);
     }
 
 

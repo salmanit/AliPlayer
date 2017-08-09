@@ -7,10 +7,10 @@ android {
     buildToolsVersion "25.0.3"
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 14
         targetSdkVersion 21
         versionCode 1
-        versionName "1.0"
+        versionName "1.2"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -26,6 +26,6 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/alivc-player-2.4.0.jar')
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    provided 'com.android.support:appcompat-v7:25.3.1'
 }
 apply from: 'bintrayUpload.gradle'

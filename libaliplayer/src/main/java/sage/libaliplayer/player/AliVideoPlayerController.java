@@ -58,7 +58,7 @@ public class AliVideoPlayerController extends FrameLayout
     }
 
     private void init() {
-        LayoutInflater.from(mContext).inflate(R.layout.nice_video_palyer_controller, this, true);
+        LayoutInflater.from(mContext).inflate(R.layout.ali_video_palyer_controller, this, true);
         mCenterStart = (ImageView) findViewById(R.id.center_start);
         mImage = (ImageView) findViewById(R.id.image);
 
@@ -94,7 +94,22 @@ public class AliVideoPlayerController extends FrameLayout
         this.setOnClickListener(this);
     }
 
-
+    public void showCenterPlayUi(){
+        if(mCenterStart!=null){
+            mCenterStart.setVisibility(View.VISIBLE);
+        }
+    }
+    public void hiddenTime(){
+        if(mPosition!=null){
+            mPosition.setVisibility(View.INVISIBLE);
+        }
+        if(mSeek!=null){
+            mSeek.setVisibility(View.INVISIBLE);
+        }
+        if(mDuration!=null){
+            mDuration.setVisibility(View.INVISIBLE);
+        }
+    }
     public void setTitle(String title) {
         mTitle.setText(title);
     }
@@ -125,6 +140,9 @@ public class AliVideoPlayerController extends FrameLayout
 
     @Override
     public void onClick(View v) {
+        if(controllerListener!=null){
+            controllerListener.onClick(v);
+        }
         if (v == mCenterStart) {
             if (mNiceVideoPlayer.isIdle()) {
                 mNiceVideoPlayer.start();
@@ -152,9 +170,11 @@ public class AliVideoPlayerController extends FrameLayout
             mNiceVideoPlayer.start();
         } else if (v == mReplay) {
             mRetry.performClick();
-        } else if (v == mShare) {
-            Toast.makeText(mContext, "分享", Toast.LENGTH_SHORT).show();
-        } else if (v == this) {
+        }
+//        else if (v == mShare) {
+//            Toast.makeText(mContext, "分享", Toast.LENGTH_SHORT).show();
+//        }
+        else if (v == this) {
             if (mNiceVideoPlayer.isPlaying()
                     || mNiceVideoPlayer.isPaused()
                     || mNiceVideoPlayer.isBufferingPlaying()
@@ -162,6 +182,13 @@ public class AliVideoPlayerController extends FrameLayout
                 setTopBottomVisible(!topBottomVisible);
             }
         }
+
+    }
+
+    ControllerListener controllerListener;
+
+    public void setControllerListener(ControllerListener controllerListener) {
+        this.controllerListener = controllerListener;
     }
 
     private void setTopBottomVisible(boolean visible) {
@@ -178,6 +205,9 @@ public class AliVideoPlayerController extends FrameLayout
     }
 
     public void setControllerState(int playerState, int playState) {
+        if(controllerListener!=null){
+            controllerListener.playerState(playerState);
+        }
         switch (playerState) {
             case AliVideoPlayer.PLAYER_NORMAL:
                 mBack.setVisibility(View.GONE);

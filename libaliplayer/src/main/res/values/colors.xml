@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_ali_player_bottom_bg">#55000000</color>
+    <color name="color_ali_player_back_bg">#55000000</color>
+    <color name="color_ali_seek_thumb_press_big_circle">#96ff7000</color>
+    <color name="color_ali_seek_thumb_normal_big_circle">#5aff7000</color>
+    <color name="color_ali_seek_thumb_dot_circle">#ff7000</color>
+
+    <color name="color_ali_sb_secondary">#ffffff</color>
+    <color name="color_ali_sb_background">#a5ffffff</color>
+</resources>

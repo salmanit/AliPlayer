@@ -110,6 +110,7 @@
             android:id="@+id/back"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:background="@drawable/shape_circle_bg_for_back"
             android:src="@drawable/ali_ic_player_back"
             android:visibility="visible"/>
 
@@ -127,9 +128,9 @@
     <LinearLayout
         android:id="@+id/bottom"
         android:layout_width="match_parent"
-        android:layout_height="42dp"
+        android:layout_height="40dp"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/ali_player_mask_bottom"
+        android:background="@drawable/ali_player_bottom_bg"
         android:gravity="center_vertical"
         android:paddingLeft="8dp"
         android:paddingRight="8dp">
@@ -149,20 +150,12 @@
             android:textColor="@android:color/white"
             android:textSize="12sp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="/"
-            android:textColor="@android:color/white"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:id="@+id/duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="00:00"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"/>
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="/"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="14sp"/>-->
 
         <SeekBar
             android:id="@+id/seek"
@@ -176,11 +169,19 @@
             android:minHeight="1.5dp"
             android:progressDrawable="@drawable/ali_seek_progress"
             android:thumb="@drawable/ali_seek_thumb"/>
-
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"/>
         <ImageView
             android:id="@+id/full_screen"
-            android:layout_width="24dp"
+            android:layout_marginLeft="5dp"
+            android:layout_width="wrap_content"
             android:layout_height="24dp"
+            android:padding="5dp"
             android:src="@drawable/ali_ic_player_enlarge"/>
     </LinearLayout>
 
@@ -190,6 +191,6 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:src="@drawable/ali_ic_player_center_start"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
 </RelativeLayout>
