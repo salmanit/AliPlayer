@@ -1,10 +1,16 @@
 package sage.libaliplayer.player;
 
+import android.app.Activity;
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.CountDownTimer;
 import android.support.annotation.DrawableRes;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,7 +24,7 @@ import java.util.TimerTask;
 import sage.libaliplayer.R;
 
 /**
- * Created by XiaoJianjun on 2017/4/28.
+ * Created by sage on 2017/8/08.
  * 播放器控制器.
  */
 public class AliVideoPlayerController extends FrameLayout
@@ -54,7 +60,11 @@ public class AliVideoPlayerController extends FrameLayout
     public AliVideoPlayerController(Context context) {
         super(context);
         mContext = context;
+        mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+        mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        mGestureDetector = new GestureDetector(getContext(), new MyGestureListener());
         init();
+        setAliChangeToast(new AliChangeToast(context));
     }
 
     private void init() {
@@ -94,37 +104,32 @@ public class AliVideoPlayerController extends FrameLayout
         this.setOnClickListener(this);
     }
 
-    public void showCenterPlayUi(){
-        if(mCenterStart!=null){
+    public void showCenterPlayUi() {
+        if (mCenterStart != null) {
             mCenterStart.setVisibility(View.VISIBLE);
         }
     }
-    public void hiddenTime(){
-        if(mPosition!=null){
+
+    public void hiddenTime() {
+        if (mPosition != null) {
             mPosition.setVisibility(View.INVISIBLE);
         }
-        if(mSeek!=null){
+        if (mSeek != null) {
             mSeek.setVisibility(View.INVISIBLE);
         }
-        if(mDuration!=null){
+        if (mDuration != null) {
             mDuration.setVisibility(View.INVISIBLE);
         }
     }
+
     public void setTitle(String title) {
         mTitle.setText(title);
     }
 
-//    public void setImage(String imageUrl) {
-//        Glide.with(mContext)
-//                .load(imageUrl)
-//                .placeholder(R.drawable.img_default)
-//                .crossFade()
-//                .into(mImage);
-//    }
-//
-    public ImageView getCoverUI(){
+    public ImageView getCoverUI() {
         return mImage;
     }
+
     public void setImage(@DrawableRes int resId) {
         mImage.setImageResource(resId);
     }
@@ -140,7 +145,7 @@ public class AliVideoPlayerController extends FrameLayout
 
     @Override
     public void onClick(View v) {
-        if(controllerListener!=null){
+        if (controllerListener != null) {
             controllerListener.onClick(v);
         }
         if (v == mCenterStart) {
@@ -187,8 +192,9 @@ public class AliVideoPlayerController extends FrameLayout
 
     ControllerListener controllerListener;
 
-    public void setControllerListener(ControllerListener controllerListener) {
+    public AliVideoPlayerController setControllerListener(ControllerListener controllerListener) {
         this.controllerListener = controllerListener;
+        return this;
     }
 
     private void setTopBottomVisible(boolean visible) {
@@ -205,7 +211,7 @@ public class AliVideoPlayerController extends FrameLayout
     }
 
     public void setControllerState(int playerState, int playState) {
-        if(controllerListener!=null){
+        if (controllerListener != null) {
             controllerListener.playerState(playerState);
         }
         switch (playerState) {
@@ -392,4 +398,122 @@ public class AliVideoPlayerController extends FrameLayout
         mError.setVisibility(View.GONE);
         mCompleted.setVisibility(View.GONE);
     }
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (mGestureDetector.onTouchEvent(event))
+            return true;
+        // 处理手势结束
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_UP:
+                mVolume = -1;
+                mBrightness = -1f;
+                if (aliChangeToast != null) {
+                    aliChangeToast.cancelToast();
+                }
+                break;
+        }
+
+        return super.onTouchEvent(event);
+    }
+
+    public void setAliChangeToast(AliChangeToast aliChangeToast) {
+        this.aliChangeToast = aliChangeToast;
+    }
+
+    AliChangeToast aliChangeToast;
+    private AudioManager mAudioManager;
+    private GestureDetector mGestureDetector;
+    /**
+     * 最大声音
+     */
+    private int mMaxVolume;
+    /**
+     * 当前声音
+     */
+    private int mVolume = -1;
+    /**
+     * 当前亮度
+     */
+    private float mBrightness = -1f;
+
+    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        /**
+         * 滑动
+         */
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2,
+                                float distanceX, float distanceY) {
+            float mOldX = e1.getX(), mOldY = e1.getY();
+            int y = (int) e2.getY();
+
+            int windowWidth = getWidth();
+            int windowHeight = getHeight();
+
+            if (mOldX > windowWidth * 3.0 / 5)// 右边滑动
+                onVolumeSlide((mOldY - y) / windowHeight);
+            else if (mOldX < windowWidth * 2 / 5.0)// 左边滑动
+                onBrightnessSlide((mOldY - y) / windowHeight);
+
+            return super.onScroll(e1, e2, distanceX, distanceY);
+        }
+    }
+
+    /**
+     * 滑动改变声音大小
+     *
+     * @param percent 手指滑动的距离百分比【纵向】
+     */
+    private void onVolumeSlide(float percent) {
+
+        if (mVolume == -1) {
+            mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            if (mVolume < 0)
+                mVolume = 0;
+        }
+        int index = (int) (percent * mMaxVolume) + mVolume;
+        if (index > mMaxVolume)
+            index = mMaxVolume;
+        else if (index < 0)
+            index = 0;
+
+        // 变更声音
+        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, index, 0);
+        // 变更进度条
+        if (aliChangeToast != null) {
+            aliChangeToast.volumeChange(index, mMaxVolume);
+        }
+    }
+
+    /**
+     * 滑动改变亮度
+     *
+     * @param percent 手指滑动的距离百分比【纵向】
+     */
+    private void onBrightnessSlide(float percent) {
+
+        Window window = ((Activity) getContext()).getWindow();
+        if (mBrightness < 0) {
+            mBrightness = window.getAttributes().screenBrightness;
+            if (mBrightness <= 0.00f)
+                mBrightness = 0.50f;
+            if (mBrightness < 0.01f)
+                mBrightness = 0.01f;
+            // 显示
+
+        }
+        WindowManager.LayoutParams lpa = window.getAttributes();
+        lpa.screenBrightness = mBrightness + percent;
+        if (lpa.screenBrightness > 1.0f)
+            lpa.screenBrightness = 1.0f;
+        else if (lpa.screenBrightness < 0.01f)
+            lpa.screenBrightness = 0.01f;
+        window.setAttributes(lpa);
+        if (aliChangeToast != null) {
+            aliChangeToast.screenBrightnessChange(lpa.screenBrightness);
+        }
+    }
+
 }

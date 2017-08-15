@@ -1,19 +1,20 @@
 package sage.libaliplayer.player;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.OrientationEventListener;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
 import com.alivc.player.AliVcMediaPlayer;
 import com.alivc.player.MediaPlayer;
-
-
 
 /**
  * 播放器
@@ -52,7 +53,7 @@ public class AliVideoPlayer extends FrameLayout
 
     private int mBufferPercentage;
     private boolean hiddenTime;
-    
+
     public AliVideoPlayer(Context context) {
         this(context, null);
     }
@@ -70,20 +71,21 @@ public class AliVideoPlayer extends FrameLayout
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         this.addView(mContainer, params);
-        setController(mController =new AliVideoPlayerController(mContext));
+        setController(mController = new AliVideoPlayerController(mContext));
 
     }
 
-    public void setUrl(String url,boolean hiddenTime){
+    public void setUrl(String url, boolean hiddenTime) {
         setUrl(url);
-        this.hiddenTime=hiddenTime;
+        this.hiddenTime = hiddenTime;
     }
+
     public void setUrl(String url) {
         mUrl = url;
-        if(TextUtils.isEmpty(mUrl)){
+        if (TextUtils.isEmpty(mUrl)) {
             return;
         }
-        if(mController!=null){
+        if (mController != null) {
             mController.showCenterPlayUi();
         }
     }
@@ -93,7 +95,7 @@ public class AliVideoPlayer extends FrameLayout
     }
 
     public void setController(AliVideoPlayerController controller) {
-        if(mContainer!=null)
+        if (mContainer != null)
             mContainer.removeView(mController);
         mController = controller;
         mController.setNiceVideoPlayer(this);
@@ -102,9 +104,10 @@ public class AliVideoPlayer extends FrameLayout
                 ViewGroup.LayoutParams.MATCH_PARENT);
         mContainer.addView(mController, params);
     }
+
     private void initMediaPlayer() {
         if (mMediaPlayer == null) {
-            mMediaPlayer = new AliVcMediaPlayer(getContext(),mSurfaceView);
+            mMediaPlayer = new AliVcMediaPlayer(getContext(), mSurfaceView);
             mMediaPlayer.setVideoScalingMode(MediaPlayer.VideoScalingMode.VIDEO_SCALING_MODE_SCALE_TO_FIT);
             // 设置图像适配屏幕，适配最短边，超出部分裁剪
 //            mMediaPlayer.setVideoScalingMode(MediaPlayer.VideoScalingMode.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
@@ -130,36 +133,37 @@ public class AliVideoPlayer extends FrameLayout
         }
     }
 
-    private MediaPlayer.MediaPlayerSeekCompleteListener  seekCompleteListener=new MediaPlayer.MediaPlayerSeekCompleteListener() {
+    private MediaPlayer.MediaPlayerSeekCompleteListener seekCompleteListener = new MediaPlayer.MediaPlayerSeekCompleteListener() {
         @Override
         public void onSeekCompleted() {
-            DebugLogUtil.i("onSeekCompleted=================");
+            System.out.println("onSeekCompleted=================");
         }
     };
 
-    private MediaPlayer.MediaPlayerCompletedListener completedListener=new MediaPlayer.MediaPlayerCompletedListener() {
+    private MediaPlayer.MediaPlayerCompletedListener completedListener = new MediaPlayer.MediaPlayerCompletedListener() {
         @Override
         public void onCompleted() {
-            DebugLogUtil.i("onCompleted=================");
+            System.out.println("onCompleted=================");
             mCurrentState = STATE_COMPLETED;
             mController.setControllerState(mPlayerState, mCurrentState);
             AliVideoPlayerManager.instance().setCurrentNiceVideoPlayer(null);
         }
     };
-    private MediaPlayer.MediaPlayerVideoSizeChangeListener videoSizeChangeListener=new MediaPlayer.MediaPlayerVideoSizeChangeListener() {
+    private MediaPlayer.MediaPlayerVideoSizeChangeListener videoSizeChangeListener = new MediaPlayer.MediaPlayerVideoSizeChangeListener() {
         @Override
         public void onVideoSizeChange(int i, int i1) {
-            DebugLogUtil.i("onVideoSizeChange=================="+i+"/"+i1);
+            System.out.println("onVideoSizeChange==================" + i + "/" + i1);
         }
     };
 
-    private MediaPlayer.MediaPlayerBufferingUpdateListener bufferingUpdateListener=new MediaPlayer.MediaPlayerBufferingUpdateListener() {
+    private MediaPlayer.MediaPlayerBufferingUpdateListener bufferingUpdateListener = new MediaPlayer.MediaPlayerBufferingUpdateListener() {
         @Override
         public void onBufferingUpdateListener(int i) {
-            DebugLogUtil.i("onBufferingUpdateListener==================="+i);
+            System.out.println("onBufferingUpdateListener===================" + i);
             mBufferPercentage = i;
         }
     };
+
     private void initSurfaceView() {
         if (mSurfaceView == null) {
             mSurfaceView = new SurfaceView(mContext);
@@ -167,7 +171,7 @@ public class AliVideoPlayer extends FrameLayout
                 @Override
                 public void surfaceCreated(SurfaceHolder holder) {
                     holder.setKeepScreenOn(true);
-                    DebugLogUtil.i("surfaceCreated============="+holder.isCreating());
+                    System.out.println("surfaceCreated=============" + holder.isCreating());
                     if (mMediaPlayer != null) {
                         // 对于从后台切换到前台,需要重设surface;部分手机锁屏也会做前后台切换的处理
                         mMediaPlayer.setVideoSurface(mSurfaceView.getHolder().getSurface());
@@ -179,14 +183,14 @@ public class AliVideoPlayer extends FrameLayout
 
                 @Override
                 public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-                    DebugLogUtil.i("surfaceChanged============"+width+"/"+height);
+                    System.out.println("surfaceChanged============" + width + "/" + height);
                     if (mMediaPlayer != null)
                         mMediaPlayer.setSurfaceChanged();
                 }
 
                 @Override
                 public void surfaceDestroyed(SurfaceHolder holder) {
-                    DebugLogUtil.i("surfaceDestroyed===============");
+                    System.out.println("surfaceDestroyed===============");
                     if (mMediaPlayer != null)
                         mMediaPlayer.releaseVideoSurface();
                 }
@@ -195,17 +199,19 @@ public class AliVideoPlayer extends FrameLayout
     }
 
     SurfaceView mSurfaceView;
+
     private void addTextureView() {
         mContainer.removeView(mSurfaceView);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        params.gravity=Gravity.CENTER;
+        params.gravity = Gravity.CENTER;
         mContainer.addView(mSurfaceView, 0, params);
     }
+
     @Override
     public void start() {
-        if(TextUtils.isEmpty(mUrl)){
+        if (TextUtils.isEmpty(mUrl)) {
             return;
         }
         AliVideoPlayerManager.instance().releaseNiceVideoPlayer();
@@ -215,8 +221,8 @@ public class AliVideoPlayer extends FrameLayout
                 || mCurrentState == STATE_COMPLETED) {
             initSurfaceView();
             addTextureView();
-
         }
+        setAutoRotateEnable(autoRotate);
     }
 
     @Override
@@ -331,10 +337,9 @@ public class AliVideoPlayer extends FrameLayout
 
 
     private class VideoInfolistener implements AliVcMediaPlayer.MediaPlayerInfoListener {
-        public void onInfo(int what, int extra){
-            DebugLogUtil.i("MediaPlayerInfoListener=========="+what);
-            switch (what)
-            {
+        public void onInfo(int what, int extra) {
+            System.out.println("MediaPlayerInfoListener==========" + what);
+            switch (what) {
                 case MediaPlayer.MEDIA_INFO_UNKNOW:
                     // 未知
                     break;
@@ -368,29 +373,29 @@ public class AliVideoPlayer extends FrameLayout
         }
     }
 
-    private class VideoPrepareListener implements AliVcMediaPlayer.MediaPlayerPreparedListener{
+    private class VideoPrepareListener implements AliVcMediaPlayer.MediaPlayerPreparedListener {
         @Override
         public void onPrepared() {
             //更新视频总进度
-            DebugLogUtil.i("onPrepared=========");
+            System.out.println("onPrepared=========");
             mCurrentState = STATE_PREPARED;
             mController.setControllerState(mPlayerState, mCurrentState);
-            thisWidth=getWidth();
-            thisHeight=getHeight();
-            if(hiddenTime){
-                if(mController!=null){
+            thisWidth = getWidth();
+            thisHeight = getHeight();
+            if (hiddenTime) {
+                if (mController != null) {
                     mController.hiddenTime();
                 }
             }
-        } }
+        }
+    }
 
     private class VideoErrorListener implements AliVcMediaPlayer.MediaPlayerErrorListener {
         public void onError(int what, int extra) {
-            DebugLogUtil.i("onError========="+what);
+            System.out.println("onError=========" + what);
             mCurrentState = STATE_ERROR;
             mController.setControllerState(mPlayerState, mCurrentState);
-            switch(what)
-            {
+            switch (what) {
                 case MediaPlayer.ALIVC_ERR_ILLEGALSTATUS:
                     // 非法状态！
                     break;
@@ -422,37 +427,43 @@ public class AliVideoPlayer extends FrameLayout
         }
     }
 
-    /**这里的宽高为播放控件的*/
-    private void handleTextViewSize(int width,int height){
-        int videoWidth=mMediaPlayer.getVideoWidth();
-        int videoHeight=mMediaPlayer.getVideoHeight();
+    /**
+     * 这里的宽高为播放控件的
+     */
+    private void handleTextViewSize(int width, int height) {
+        int videoWidth = mMediaPlayer.getVideoWidth();
+        int videoHeight = mMediaPlayer.getVideoHeight();
 
-        ViewGroup.LayoutParams params=mSurfaceView.getLayoutParams();
-            if(videoWidth*1f/videoHeight>=width*1f/height){
-                int realHeight=videoHeight*width/videoWidth;
+        ViewGroup.LayoutParams params = mSurfaceView.getLayoutParams();
+        if (videoWidth * 1f / videoHeight >= width * 1f / height) {
+            int realHeight = videoHeight * width / videoWidth;
 
-                params.height=realHeight;
-                params.width=ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = realHeight;
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
 
 
-            }else if(videoWidth*1f/videoHeight<width*1f/height){
-                int realWidth=videoWidth*height/videoHeight;
-                params.width=realWidth;
-                params.height=ViewGroup.LayoutParams.MATCH_PARENT;
-            }
+        } else if (videoWidth * 1f / videoHeight < width * 1f / height) {
+            int realWidth = videoWidth * height / videoHeight;
+            params.width = realWidth;
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        }
         mSurfaceView.setLayoutParams(params);
-        DebugLogUtil.i("width===="+(videoWidth*1f/videoHeight+"**********"+width*1f/height));
-        DebugLogUtil.i(videoWidth+"/"+videoHeight+"==width======"+width+"/"+height+"===="+params.width+"/"+params.height);
+        System.out.println("width====" + (videoWidth * 1f / videoHeight + "**********" + width * 1f / height));
+        System.out.println(videoWidth + "/" + videoHeight + "==width======" + width + "/" + height + "====" + params.width + "/" + params.height);
     }
 
 
     private int thisWidth;//控件原始的宽
     private int thisHeight;//高
+
     /**
      * 全屏，将mContainer(内部包含mTextureView和mController)从当前容器中移除，并添加到android.R.content中.
      */
     @Override
     public void enterFullScreen() {
+        if (mMediaPlayer == null) {
+            return;
+        }
         if (mPlayerState == PLAYER_FULL_SCREEN) return;
 
         // 隐藏ActionBar、状态栏，并横屏
@@ -467,7 +478,7 @@ public class AliVideoPlayer extends FrameLayout
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         contentView.addView(mContainer, params);
-        handleTextViewSize(getResources().getDisplayMetrics().heightPixels,getResources().getDisplayMetrics().widthPixels);
+        handleTextViewSize(getResources().getDisplayMetrics().heightPixels, getResources().getDisplayMetrics().widthPixels);
         mPlayerState = PLAYER_FULL_SCREEN;
         mController.setControllerState(mPlayerState, mCurrentState);
     }
@@ -479,6 +490,9 @@ public class AliVideoPlayer extends FrameLayout
      */
     @Override
     public boolean exitFullScreen() {
+        if (mMediaPlayer == null) {
+            return false;
+        }
         if (mPlayerState == PLAYER_FULL_SCREEN) {
             AliUtil.showActionBar(mContext);
             AliUtil.scanForActivity(mContext)
@@ -491,7 +505,7 @@ public class AliVideoPlayer extends FrameLayout
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
             this.addView(mContainer, params);
-            handleTextViewSize(thisWidth,thisHeight);
+            handleTextViewSize(thisWidth, thisHeight);
             mPlayerState = PLAYER_NORMAL;
             mController.setControllerState(mPlayerState, mCurrentState);
             return true;
@@ -516,7 +530,7 @@ public class AliVideoPlayer extends FrameLayout
         params.rightMargin = AliUtil.dp2px(mContext, 8f);
         params.bottomMargin = AliUtil.dp2px(mContext, 8f);
         contentView.addView(mContainer, params);
-        handleTextViewSize(params.width,params.height);
+        handleTextViewSize(params.width, params.height);
         mPlayerState = PLAYER_TINY_WINDOW;
         mController.setControllerState(mPlayerState, mCurrentState);
     }
@@ -534,7 +548,7 @@ public class AliVideoPlayer extends FrameLayout
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
             this.addView(mContainer, params);
-                handleTextViewSize(thisWidth,thisWidth);
+            handleTextViewSize(thisWidth, thisWidth);
             mPlayerState = PLAYER_NORMAL;
             mController.setControllerState(mPlayerState, mCurrentState);
             return true;
@@ -550,19 +564,61 @@ public class AliVideoPlayer extends FrameLayout
             mMediaPlayer = null;
         }
         mContainer.removeView(mSurfaceView);
-        mSurfaceView=null;
+        mSurfaceView = null;
         if (mController != null) {
             mController.reset();
         }
         mCurrentState = STATE_IDLE;
         mPlayerState = PLAYER_NORMAL;
-
+        setAutoRotateEnable(false);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         release();
+    }
+
+    OrientationEventListener listener;
+    boolean autoRotate = false;
+
+    public void autoRotateScreen(boolean auto) {
+        autoRotate = auto;
+        final Activity activity = (Activity) getContext();
+        listener = new OrientationEventListener(activity) {
+            @Override
+            public void onOrientationChanged(int orientation) {
+                if ((0 <= orientation && orientation < 30) || orientation >= 330) {
+                    exitFullScreen();
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+                if (orientation > 270 - 40 && orientation < 270 + 40) {
+                    enterFullScreen();
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                }
+                if (orientation > 90 - 40 && orientation < 90 + 40) {
+                    enterFullScreen();
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                }
+                if (orientation > 180 - 40 && orientation < 180 + 40) {
+                    //竖屏翻转的貌似没效果
+                    exitFullScreen();
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+                }
+            }
+        };
+    }
+
+    private void setAutoRotateEnable(boolean auto) {
+        if (listener != null)
+            if (listener.canDetectOrientation()) {
+                if (auto) {
+                    listener.enable();
+                } else {
+                    listener.disable();
+                }
+            }
+
     }
 
 

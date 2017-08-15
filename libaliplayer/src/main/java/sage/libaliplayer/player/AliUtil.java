@@ -35,7 +35,6 @@ public class AliUtil {
 
     /**
      * Get AppCompatActivity from context
-     *
      * @param context context
      * @return AppCompatActivity if it's not null
      */
@@ -74,7 +73,6 @@ public class AliUtil {
 
     /**
      * 获取屏幕宽度
-     *
      * @param context context
      * @return width of the screen.
      */
@@ -84,7 +82,6 @@ public class AliUtil {
 
     /**
      * dp转px
-     *
      * @param context context
      * @param dpVal   dp value
      * @return px value
@@ -96,7 +93,6 @@ public class AliUtil {
 
     /**
      * 将毫秒数格式化为"##:##"的时间
-     *
      * @param milliseconds 毫秒数
      * @return ##:##
      */
