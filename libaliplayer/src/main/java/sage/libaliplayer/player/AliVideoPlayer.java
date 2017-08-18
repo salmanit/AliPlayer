@@ -581,6 +581,7 @@ public class AliVideoPlayer extends FrameLayout
 
     OrientationEventListener listener;
     boolean autoRotate = false;
+    int orientationTag = -1;
 
     public void autoRotateScreen(boolean auto) {
         autoRotate = auto;
@@ -588,20 +589,36 @@ public class AliVideoPlayer extends FrameLayout
         listener = new OrientationEventListener(activity) {
             @Override
             public void onOrientationChanged(int orientation) {
+
                 if ((0 <= orientation && orientation < 30) || orientation >= 330) {
+                    if (orientationTag == 1) {
+                        return;
+                    }
+                    orientationTag = 1;
                     exitFullScreen();
                     activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 }
                 if (orientation > 270 - 40 && orientation < 270 + 40) {
+                    if (orientationTag == 2) {
+                        return;
+                    }
+                    orientationTag = 2;
                     enterFullScreen();
                     activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 }
                 if (orientation > 90 - 40 && orientation < 90 + 40) {
+                    if (orientationTag == 3) {
+                        return;
+                    }
+                    orientationTag = 3;
                     enterFullScreen();
                     activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
                 }
                 if (orientation > 180 - 40 && orientation < 180 + 40) {
-                    //竖屏翻转的貌似没效果
+                    if (orientationTag == 4) {
+                        return;
+                    }
+                    orientationTag = 4;
                     exitFullScreen();
                     activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
                 }
@@ -609,7 +626,7 @@ public class AliVideoPlayer extends FrameLayout
         };
     }
 
-    private void setAutoRotateEnable(boolean auto) {
+    public void setAutoRotateEnable(boolean auto) {
         if (listener != null)
             if (listener.canDetectOrientation()) {
                 if (auto) {
