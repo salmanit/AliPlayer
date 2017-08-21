@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.CountDownTimer;
-import android.support.annotation.DrawableRes;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,11 +15,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.util.Timer;
 import java.util.TimerTask;
-
 import sage.libaliplayer.R;
 
 /**
@@ -51,7 +47,7 @@ public class AliVideoPlayerController extends FrameLayout
     private LinearLayout mCompleted;
     private TextView mReplay;
     private TextView mShare;
-
+    private TextView tv_error;
     private Timer mUpdateProgressTimer;
     private TimerTask mUpdateProgressTimerTask;
     private boolean topBottomVisible;
@@ -88,7 +84,7 @@ public class AliVideoPlayerController extends FrameLayout
 
         mError = (LinearLayout) findViewById(R.id.error);
         mRetry = (TextView) findViewById(R.id.retry);
-
+        tv_error= (TextView) findViewById(R.id.tv_error);
         mCompleted = (LinearLayout) findViewById(R.id.completed);
         mReplay = (TextView) findViewById(R.id.replay);
         mShare = (TextView) findViewById(R.id.share);
@@ -103,7 +99,14 @@ public class AliVideoPlayerController extends FrameLayout
         mSeek.setOnSeekBarChangeListener(this);
         this.setOnClickListener(this);
     }
-
+    public void setErrorText( int resID){
+        setErrorText(getResources().getString(resID));
+    }
+    public void setErrorText(String errorText){
+        if(tv_error!=null){
+            tv_error.setText(errorText);
+        }
+    }
     public void showCenterPlayUi() {
         if (mCenterStart != null) {
             mCenterStart.setVisibility(View.VISIBLE);
@@ -130,7 +133,7 @@ public class AliVideoPlayerController extends FrameLayout
         return mImage;
     }
 
-    public void setImage(@DrawableRes int resId) {
+    public void setImage( int resId) {
         mImage.setImageResource(resId);
     }
 
@@ -283,6 +286,8 @@ public class AliVideoPlayerController extends FrameLayout
                 setTopBottomVisible(false);
                 mTop.setVisibility(View.VISIBLE);
                 mError.setVisibility(View.VISIBLE);
+                mImage.setVisibility(View.VISIBLE);
+                mLoading.setVisibility(GONE);
                 break;
         }
     }
@@ -399,22 +404,23 @@ public class AliVideoPlayerController extends FrameLayout
         mCompleted.setVisibility(View.GONE);
     }
 
-
+    public boolean handleTouch;//是否支持手势操作音量，屏幕暗度
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mGestureDetector.onTouchEvent(event))
-            return true;
-        // 处理手势结束
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_UP:
-                mVolume = -1;
-                mBrightness = -1f;
-                if (aliChangeToast != null) {
-                    aliChangeToast.cancelToast();
-                }
-                break;
+        if(handleTouch){
+            if (mGestureDetector.onTouchEvent(event))
+                return true;
+            // 处理手势结束
+            switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_UP:
+                    mVolume = -1;
+                    mBrightness = -1f;
+                    if (aliChangeToast != null) {
+                        aliChangeToast.cancelToast();
+                    }
+                    break;
+            }
         }
-
         return super.onTouchEvent(event);
     }
 
