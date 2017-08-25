@@ -212,8 +212,10 @@ public class AliVideoPlayerController extends FrameLayout
             cancelDismissTopBottomTimer();
         }
     }
-
-    public void setControllerState(int playerState, int playState) {
+    public void setControllerState(int playerState, int playState){
+        setControllerState(playerState,playState,"播放错误,请点击重试","点击重试");
+    }
+    public void setControllerState(int playerState, int playState,String errorToast,String errorBtnShow) {
         if (controllerListener != null) {
             controllerListener.playerState(playerState);
         }
@@ -288,6 +290,8 @@ public class AliVideoPlayerController extends FrameLayout
                 mError.setVisibility(View.VISIBLE);
                 mImage.setVisibility(View.VISIBLE);
                 mLoading.setVisibility(GONE);
+                mRetry.setText(errorBtnShow);
+                tv_error.setText(errorToast);
                 break;
         }
     }

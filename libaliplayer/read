@@ -11,6 +11,9 @@
     autoRotateScreen用来设置是否支持旋转，，setAutoRotateEnable用来动态更改支持状态,
 1.5 发布 增加handleTouch的boolean值，可以用来设置是否支持触摸改变声音，亮度 ，默认不支持。播放错误的时候显示背景图。
 
-1.6未发布，左右滑动支持进度条功能
+1.6 发布，增加播放错误的时候详细的错误提示
+
+
+未发布，左右滑动支持进度条功能
 
 terminal里运行命令gradle bintray 就可以了，如果成功，你就在bintray网站上看到自己的了
