@@ -80,13 +80,17 @@ public class AliVideoPlayer extends FrameLayout
         this.hiddenTime = hiddenTime;
     }
 
+    public String getmUrl() {
+        return mUrl;
+    }
+
     public void setUrl(String url) {
         mUrl = url;
         if (TextUtils.isEmpty(mUrl)) {
             return;
         }
         if (mController != null) {
-            mController.showCenterPlayUi();
+            mController.showCenterPlayUi(mUrl);
         }
     }
 
@@ -395,50 +399,50 @@ public class AliVideoPlayer extends FrameLayout
         public void onError(int what, int extra) {
             System.out.println("onError=========" + what);
             mCurrentState = STATE_ERROR;
-            String errorToast="播放错误，请点击重试";
-            String errorBtnShow="点击重试";
+            String errorToast = "播放错误，请点击重试";
+            String errorBtnShow = "点击重试";
             switch (what) {
                 case MediaPlayer.ALIVC_ERR_ILLEGALSTATUS:
-                    errorToast= "直播错误，请点击重试";//非法的播放流程
+                    errorToast = "直播错误，请点击重试";//非法的播放流程
                     break;
                 case MediaPlayer.ALIVC_ERR_NO_NETWORK:
-                    errorToast= "网络不给力，请点击重试";
-                    errorBtnShow="刷新重试";
+                    errorToast = "网络不给力，请点击重试";
+                    errorBtnShow = "刷新重试";
                     break;
                 case MediaPlayer.ALIVC_ERR_INVALID_INPUTFILE:
-                    errorToast= "直播无法正常打开";//视频资源或网络不可用！
+                    errorToast = "直播无法正常打开";//视频资源或网络不可用！
                     break;
                 case MediaPlayer.ALIVC_ERR_NO_SUPPORT_CODEC:
-                    errorToast= "编码有误,请重新获取";//无支持的解码器!
+                    errorToast = "编码有误,请重新获取";//无支持的解码器!
                     break;
 //                case MediaPlayer.ALIVC_ERR_FUNCTION_DENY:
 //                    //无此操作权限!
 //                    break;
                 case MediaPlayer.ALIVC_ERR_UNKNOWN:
-                    errorToast= "发现未知错误，请点击重试";
+                    errorToast = "发现未知错误，请点击重试";
                     break;
                 case MediaPlayer.ALIVC_ERR_NOTAUTH:
-                    errorToast= "直播授权有误，请点击重试";
+                    errorToast = "直播授权有误，请点击重试";
                     break;
                 case MediaPlayer.ALIVC_ERR_READD:
-                    errorToast= "资源访问失败!";
+                    errorToast = "资源访问失败!";
                     break;
                 case MediaPlayer.ALIVC_ERR_NO_MEMORY:
-                    errorToast= "你的手机内存不足，建议尝试清楚内存空间";
+                    errorToast = "你的手机内存不足，建议尝试清楚内存空间";
                     break;
                 case MediaPlayer.ALIVC_ERR_LOADING_TIMEOUT:
                 case MediaPlayer.MEDIA_ERROR_TIMEOUT:
-                    errorToast= "网络已超时，请点击重试";
-                    errorBtnShow="刷新重试";
+                    errorToast = "网络已超时，请点击重试";
+                    errorBtnShow = "刷新重试";
                     break;
                 case MediaPlayer.ALIVC_ERR_NO_VIEW:
-                    errorToast= "显示有误，请点击重试";
+                    errorToast = "显示有误，请点击重试";
                     break;
                 default:
                     //播放错误!
                     break;
             }
-            mController.setControllerState(mPlayerState, mCurrentState,errorToast,errorBtnShow);
+            mController.setControllerState(mPlayerState, mCurrentState, errorToast, errorBtnShow);
         }
     }
 

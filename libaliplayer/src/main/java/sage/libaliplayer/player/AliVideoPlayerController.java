@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.CountDownTimer;
+import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -107,7 +108,10 @@ public class AliVideoPlayerController extends FrameLayout
             tv_error.setText(errorText);
         }
     }
-    public void showCenterPlayUi() {
+    private String url;
+
+    public void showCenterPlayUi(String url) {
+        this.url=url;
         if (mCenterStart != null) {
             mCenterStart.setVisibility(View.VISIBLE);
         }
@@ -393,8 +397,8 @@ public class AliVideoPlayerController extends FrameLayout
         cancelDismissTopBottomTimer();
         mSeek.setProgress(0);
         mSeek.setSecondaryProgress(0);
-
-        mCenterStart.setVisibility(View.VISIBLE);
+        if(!TextUtils.isEmpty(url))
+            mCenterStart.setVisibility(View.VISIBLE);
         mImage.setVisibility(View.VISIBLE);
 
         mBottom.setVisibility(View.GONE);
