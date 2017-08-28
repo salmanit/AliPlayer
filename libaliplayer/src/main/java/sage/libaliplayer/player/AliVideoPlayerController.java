@@ -245,7 +245,7 @@ public class AliVideoPlayerController extends FrameLayout
                 // 只显示准备中动画，其他不显示
                 mImage.setVisibility(View.GONE);
                 mLoading.setVisibility(View.VISIBLE);
-                mLoadText.setText("正在准备...");
+                mLoadText.setText(R.string.ali_play_state_preparing);
                 mError.setVisibility(View.GONE);
                 mCompleted.setVisibility(View.GONE);
                 mTop.setVisibility(View.GONE);
@@ -267,13 +267,13 @@ public class AliVideoPlayerController extends FrameLayout
             case AliVideoPlayer.STATE_BUFFERING_PLAYING:
                 mLoading.setVisibility(View.VISIBLE);
                 mRestartPause.setImageResource(R.drawable.ali_ic_player_pause);
-                mLoadText.setText("正在缓冲...");
+                mLoadText.setText(R.string.ali_play_state_buffering);
                 startDismissTopBottomTimer();
                 break;
             case AliVideoPlayer.STATE_BUFFERING_PAUSED:
                 mLoading.setVisibility(View.VISIBLE);
                 mRestartPause.setImageResource(R.drawable.ali_ic_player_start);
-                mLoadText.setText("正在缓冲...");
+                mLoadText.setText(R.string.ali_play_state_buffering);
                 cancelDismissTopBottomTimer();
             case AliVideoPlayer.STATE_COMPLETED:
                 cancelUpdateProgressTimer();

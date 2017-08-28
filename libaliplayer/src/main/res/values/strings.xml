@@ -1,4 +1,7 @@
 <resources>
 
-
+<string name="ali_play_state_preparing">正在准备...</string>
+<string name="ali_play_state_buffering">正在缓冲...</string>
+    <string name="ali_default_error_toast"></string>
+    <string name="ali_default_error_btn_show"></string>
 </resources>
