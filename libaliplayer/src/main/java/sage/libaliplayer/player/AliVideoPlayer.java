@@ -75,25 +75,30 @@ public class AliVideoPlayer extends FrameLayout
 
     }
 
-    public void setUrl(String url, boolean hiddenTime) {
-        setUrl(url);
+    public AliVideoPlayer setUrl(String url, boolean hiddenTime) {
         this.hiddenTime = hiddenTime;
+       return setUrl(url);
     }
 
     public String getmUrl() {
         return mUrl;
     }
 
-    public void setUrl(String url) {
+    public AliVideoPlayer setUrl(String url) {
         mUrl = url;
         if (TextUtils.isEmpty(mUrl)) {
-            return;
+            return this;
         }
         if (mController != null) {
             mController.showCenterPlayUi(mUrl);
         }
+        return this;
     }
-
+    private int timeOut=10*1000;
+    public AliVideoPlayer setTimeOut(int timeOut){
+        this.timeOut=timeOut;
+        return this;
+    }
     public AliVideoPlayerController getmController() {
         return mController;
     }
@@ -120,7 +125,7 @@ public class AliVideoPlayer extends FrameLayout
             //如果缺省为软解，则一直使用软解，软解较为耗电，建议移动设备尽量使用硬解
             mMediaPlayer.setDefaultDecoder(0);
 
-
+            mMediaPlayer.setTimeout(timeOut);
             mMediaPlayer.setPreparedListener(new VideoPrepareListener());             //播放器就绪事件
             mMediaPlayer.setErrorListener(new VideoErrorListener());                   //异常错误事件
             mMediaPlayer.setInfoListener(new VideoInfolistener());                     //信息状态监听事件
@@ -602,7 +607,7 @@ public class AliVideoPlayer extends FrameLayout
     boolean autoRotate = false;
     int orientationTag = -1;
 
-    public void autoRotateScreen(boolean auto) {
+    public AliVideoPlayer autoRotateScreen(boolean auto) {
         autoRotate = auto;
         final Activity activity = (Activity) getContext();
         listener = new OrientationEventListener(activity) {
@@ -643,9 +648,10 @@ public class AliVideoPlayer extends FrameLayout
                 }
             }
         };
+        return this;
     }
 
-    public void setAutoRotateEnable(boolean auto) {
+    public AliVideoPlayer setAutoRotateEnable(boolean auto) {
         if (listener != null)
             if (listener.canDetectOrientation()) {
                 if (auto) {
@@ -654,7 +660,7 @@ public class AliVideoPlayer extends FrameLayout
                     listener.disable();
                 }
             }
-
+        return this;
     }
 
 
