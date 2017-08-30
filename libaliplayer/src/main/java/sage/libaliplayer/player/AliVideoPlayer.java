@@ -86,11 +86,11 @@ public class AliVideoPlayer extends FrameLayout
 
     public AliVideoPlayer setUrl(String url) {
         mUrl = url;
-        if (TextUtils.isEmpty(mUrl)) {
-            return this;
-        }
         if (mController != null) {
             mController.showCenterPlayUi(mUrl);
+        }
+        if (TextUtils.isEmpty(mUrl)) {
+            return this;
         }
         return this;
     }
@@ -445,6 +445,9 @@ public class AliVideoPlayer extends FrameLayout
                     break;
                 case MediaPlayer.ALIVC_ERR_NO_VIEW:
                     errorToast = "显示有误，请点击重试";
+                    break;
+                case MediaPlayer.ALIVC_ERR_NO_INPUTFILE:
+                    errorToast = "未设置视频源，请点击重试";
                     break;
                 default:
                     //播放错误!

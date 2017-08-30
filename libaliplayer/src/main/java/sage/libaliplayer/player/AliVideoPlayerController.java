@@ -113,7 +113,7 @@ public class AliVideoPlayerController extends FrameLayout
     public void showCenterPlayUi(String url) {
         this.url=url;
         if (mCenterStart != null) {
-            mCenterStart.setVisibility(View.VISIBLE);
+            mCenterStart.setVisibility(TextUtils.isEmpty(url)?GONE:View.VISIBLE);
         }
     }
 
@@ -446,8 +446,7 @@ public class AliVideoPlayerController extends FrameLayout
         cancelPreparingTimer();
         mSeek.setProgress(0);
         mSeek.setSecondaryProgress(0);
-        if(!TextUtils.isEmpty(url))
-            mCenterStart.setVisibility(View.VISIBLE);
+            mCenterStart.setVisibility(TextUtils.isEmpty(url)?GONE:View.VISIBLE);
         mImage.setVisibility(View.VISIBLE);
 
         mBottom.setVisibility(View.GONE);
