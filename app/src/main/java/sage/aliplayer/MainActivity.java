@@ -12,7 +12,7 @@ import sage.libaliplayer.player.ControllerListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    String url2="rtmp://live.hkstv.hk.lxdns.com/live/hks";
+    String url = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,11 +23,13 @@ public class MainActivity extends AppCompatActivity {
                 return new AccessKey("QxJIheGFRL926hFX", "hipHJKpt0TdznQG2J4D0EVSavRH7mR");
             }
         }) ;
-        AliVideoPlayer aliVideoPlayer= (AliVideoPlayer) findViewById(R.id.ali_player);
-        aliVideoPlayer.setUrl(url2);
+         aliVideoPlayer= (AliVideoPlayer) findViewById(R.id.ali_player);
+        aliVideoPlayer.setUrl(url);
+        aliVideoPlayer.getmController().getCoverUI().setImageResource(R.mipmap.ic_launcher_round);
+        aliVideoPlayer.getmController().setErrorText("error");
 
-        AliVideoPlayer aliVideoPlayer2= (AliVideoPlayer) findViewById(R.id.ali_player2);
-        aliVideoPlayer2.setUrl(url2,true);
+         aliVideoPlayer2= (AliVideoPlayer) findViewById(R.id.ali_player2);
+        aliVideoPlayer2.setUrl(url,true);
         aliVideoPlayer2.getmController().setControllerListener(new ControllerListener() {
             @Override
             public void onClick(View v) {
@@ -36,13 +38,23 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void playerState(int playerState) {
-
+                System.out.println("================="+playerState);
             }
         });
-
         aliVideoPlayer2.autoRotateScreen(true);
-    }
+        aliVideoPlayer2.getmController().handleTouch=true;
+        aliVideoPlayer2.getmController().getCoverUI().setImageResource(R.mipmap.ic_launcher_round);
 
+        findViewById(R.id.btn_stop).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                aliVideoPlayer.setUrl("");
+                aliVideoPlayer.release();
+            }
+        });
+    }
+    AliVideoPlayer aliVideoPlayer;
+    AliVideoPlayer aliVideoPlayer2;
     @Override
     public void onBackPressed() {
         if(AliVideoPlayerManager.instance().onBackPressd()){
@@ -50,11 +62,22 @@ public class MainActivity extends AppCompatActivity {
         }
         AliVideoPlayerManager.instance().releaseNiceVideoPlayer();
         super.onBackPressed();
+
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        aliVideoPlayer2.setAutoRotateEnable(true);
+        System.out.println("=================onResume");
+    }
 
-
-
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        aliVideoPlayer2.setAutoRotateEnable(false);
+        aliVideoPlayer.pause();
+        System.out.println("=================onPause");
+    }
 }
