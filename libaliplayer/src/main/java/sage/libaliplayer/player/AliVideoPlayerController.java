@@ -219,6 +219,7 @@ public class AliVideoPlayerController extends FrameLayout
     public void setControllerState(int playerState, int playState){
         setControllerState(playerState,playState,"播放错误,请点击重试","点击重试");
     }
+    private int currentPlayState=AliVideoPlayer.STATE_IDLE;
     public void setControllerState(int playerState, int playState,String errorToast,String errorBtnShow) {
         if (controllerListener != null) {
             controllerListener.playerState(playerState);
@@ -238,6 +239,7 @@ public class AliVideoPlayerController extends FrameLayout
                 mFullScreen.setVisibility(View.GONE);
                 break;
         }
+        currentPlayState=playState;
         switch (playState) {
             case AliVideoPlayer.STATE_IDLE:
                 break;
@@ -297,6 +299,11 @@ public class AliVideoPlayerController extends FrameLayout
                 mRetry.setText(errorBtnShow);
                 tv_error.setText(errorToast);
                 break;
+        }
+        if(playState==AliVideoPlayer.STATE_PREPARING){
+            startPreparingTimer();
+        }else{
+            cancelPreparingTimer();
         }
     }
 
@@ -387,7 +394,48 @@ public class AliVideoPlayerController extends FrameLayout
         mNiceVideoPlayer.seekTo(position);
         startDismissTopBottomTimer();
     }
+    Timer preparingTimer;
+    TimerTask preparingTimerTask;
+    long preparingStartTime;
+    public void startPreparingTimer(){
+        if(preparingTimer==null){
+            preparingTimer=new Timer();
+        }
+        if(preparingTimerTask==null){
+            preparingTimerTask=new TimerTask() {
+                @Override
+                public void run() {
+                    if(System.currentTimeMillis()-preparingStartTime>15*1000){
+                        AliVideoPlayerController.this.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    setControllerState(AliVideoPlayer.PLAYER_NORMAL,AliVideoPlayer.STATE_ERROR,
+                                            "网络已超时，请点击重试","刷新重试");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
 
+                    }
+                }
+            };
+        }
+        preparingStartTime=System.currentTimeMillis();
+        preparingTimer.schedule(preparingTimerTask,0,500);
+    }
+
+    public void cancelPreparingTimer(){
+        if (preparingTimer != null) {
+            preparingTimer.cancel();
+            preparingTimer = null;
+        }
+        if (preparingTimerTask != null) {
+            preparingTimerTask.cancel();
+            preparingTimerTask = null;
+        }
+    }
     /**
      * 控制器恢复到初始状态
      */
@@ -395,6 +443,7 @@ public class AliVideoPlayerController extends FrameLayout
         topBottomVisible = false;
         cancelUpdateProgressTimer();
         cancelDismissTopBottomTimer();
+        cancelPreparingTimer();
         mSeek.setProgress(0);
         mSeek.setSecondaryProgress(0);
         if(!TextUtils.isEmpty(url))

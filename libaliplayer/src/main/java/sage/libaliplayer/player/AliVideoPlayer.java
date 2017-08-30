@@ -94,7 +94,7 @@ public class AliVideoPlayer extends FrameLayout
         }
         return this;
     }
-    private int timeOut=10*1000;
+    private int timeOut=20*1000;
     public AliVideoPlayer setTimeOut(int timeOut){
         this.timeOut=timeOut;
         return this;
@@ -124,7 +124,6 @@ public class AliVideoPlayer extends FrameLayout
             //如果缺省为硬解，在使用硬解时如果解码失败，会尝试使用软解
             //如果缺省为软解，则一直使用软解，软解较为耗电，建议移动设备尽量使用硬解
             mMediaPlayer.setDefaultDecoder(0);
-
             mMediaPlayer.setTimeout(timeOut);
             mMediaPlayer.setPreparedListener(new VideoPrepareListener());             //播放器就绪事件
             mMediaPlayer.setErrorListener(new VideoErrorListener());                   //异常错误事件
@@ -139,6 +138,7 @@ public class AliVideoPlayer extends FrameLayout
             mCurrentState = STATE_PREPARING;
             mController.setControllerState(mPlayerState, mCurrentState);
             mMediaPlayer.prepareAndPlay(mUrl);
+            System.out.println("initMediaPlayer====================");
         }
     }
 
@@ -259,6 +259,9 @@ public class AliVideoPlayer extends FrameLayout
             mMediaPlayer.pause();
             mCurrentState = STATE_BUFFERING_PAUSED;
             mController.setControllerState(mPlayerState, mCurrentState);
+        }
+        if(mCurrentState==STATE_PREPARING){
+            release();
         }
     }
 
@@ -583,6 +586,7 @@ public class AliVideoPlayer extends FrameLayout
     @Override
     public void release() {
         if (mMediaPlayer != null) {
+            mMediaPlayer.releaseVideoSurface();
             mMediaPlayer.stop();
             mMediaPlayer.destroy();
             mMediaPlayer = null;
