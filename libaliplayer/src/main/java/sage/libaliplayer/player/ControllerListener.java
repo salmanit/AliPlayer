@@ -11,5 +11,5 @@ public interface ControllerListener {
 
     public void onClick(View v);
 
-    public void playerState(int playerState);
+    public void playerState(int playerState, int playState);
 }

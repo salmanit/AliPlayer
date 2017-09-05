@@ -4,4 +4,6 @@
 <string name="ali_play_state_buffering">正在缓冲...</string>
     <string name="ali_default_error_toast">网络不给力，请点击重试</string>
     <string name="ali_default_error_btn_show">点击重试</string>
+    <string name="ali_default_play_over_btn_show">重播</string>
+    <string name="ali_default_play_over_toast">直播已收看结束</string>
 </resources>

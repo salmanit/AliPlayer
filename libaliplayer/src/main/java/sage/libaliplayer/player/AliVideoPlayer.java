@@ -42,7 +42,7 @@ public class AliVideoPlayer extends FrameLayout
     public static final int PLAYER_FULL_SCREEN = 11;   // 全屏播放器
     public static final int PLAYER_TINY_WINDOW = 12;   // 小窗口播放器
 
-    private int mCurrentState = STATE_IDLE;
+    public int mCurrentState = STATE_IDLE;
     private int mPlayerState = PLAYER_NORMAL;
 
     private Context mContext;

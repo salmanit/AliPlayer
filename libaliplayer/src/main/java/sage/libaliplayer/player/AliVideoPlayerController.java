@@ -47,7 +47,6 @@ public class AliVideoPlayerController extends FrameLayout
     private TextView mRetry;
     private LinearLayout mCompleted;
     private TextView mReplay;
-    private TextView mShare;
     private TextView tv_error;
     private Timer mUpdateProgressTimer;
     private TimerTask mUpdateProgressTimerTask;
@@ -88,7 +87,6 @@ public class AliVideoPlayerController extends FrameLayout
         tv_error= (TextView) findViewById(R.id.tv_error);
         mCompleted = (LinearLayout) findViewById(R.id.completed);
         mReplay = (TextView) findViewById(R.id.replay);
-        mShare = (TextView) findViewById(R.id.share);
 
         mCenterStart.setOnClickListener(this);
         mBack.setOnClickListener(this);
@@ -96,7 +94,6 @@ public class AliVideoPlayerController extends FrameLayout
         mFullScreen.setOnClickListener(this);
         mRetry.setOnClickListener(this);
         mReplay.setOnClickListener(this);
-        mShare.setOnClickListener(this);
         mSeek.setOnSeekBarChangeListener(this);
         this.setOnClickListener(this);
     }
@@ -221,9 +218,7 @@ public class AliVideoPlayerController extends FrameLayout
     }
     private int currentPlayState=AliVideoPlayer.STATE_IDLE;
     public void setControllerState(int playerState, int playState,String errorToast,String errorBtnShow) {
-        if (controllerListener != null) {
-            controllerListener.playerState(playerState);
-        }
+
         switch (playerState) {
             case AliVideoPlayer.PLAYER_NORMAL:
                 mBack.setVisibility(View.GONE);
@@ -304,6 +299,9 @@ public class AliVideoPlayerController extends FrameLayout
             startPreparingTimer();
         }else{
             cancelPreparingTimer();
+        }
+        if (controllerListener != null) {
+            controllerListener.playerState(playerState,playState);
         }
     }
 

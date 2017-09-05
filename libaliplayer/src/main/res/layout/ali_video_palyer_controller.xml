@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
     <ImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
@@ -38,32 +39,55 @@
         android:layout_height="match_parent"
         android:background="#99333333"
         android:visibility="gone"
+        tools:visibility="visible"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
+        <!--<TextView-->
+            <!--android:id="@+id/replay"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:drawableLeft="@drawable/ali_ic_player_replay"-->
+            <!--android:text="重新播放"-->
+            <!--android:padding="8dp"-->
+            <!--android:drawablePadding="4dp"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="13sp"/>-->
         <TextView
             android:id="@+id/replay"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/ali_bg_retry"
+            android:paddingBottom="6dp"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:paddingTop="6dp"
+            android:text="@string/ali_default_play_over_btn_show"
+            android:textColor="@android:color/white"
+            android:textSize="13sp"/>
+        <TextView
+            android:id="@+id/tv_replay_toast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ali_ic_player_replay"
-            android:text="重新播放"
-            android:padding="8dp"
-            android:drawablePadding="4dp"
+            android:text="@string/ali_default_play_over_toast"
+            android:layout_marginTop="10dp"
             android:textColor="@android:color/white"
             android:textSize="13sp"/>
 
-        <TextView
-            android:id="@+id/share"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="64dp"
-            android:padding="8dp"
-            android:drawablePadding="4dp"
-            android:drawableLeft="@drawable/ali_ic_palyer_share"
-            android:text="分享"
-            android:textColor="@android:color/white"
-            android:textSize="13sp"/>
+        <!--<TextView-->
+            <!--android:id="@+id/share"-->
+            <!--android:visibility="gone"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="64dp"-->
+            <!--android:padding="8dp"-->
+            <!--android:drawablePadding="4dp"-->
+            <!--android:drawableLeft="@drawable/ali_ic_palyer_share"-->
+            <!--android:text="分享"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="13sp"/>-->
     </LinearLayout>
 
     <LinearLayout

@@ -18,7 +18,21 @@
 1.9 不知道为啥1.8的不能下载所以上传个1.9的。
 2.0 2.1通过随时修改url地址改变播放按钮的显示，处理直播结束后状态的切换。
 
-2.2增加wifi状态切换权限，否则可能会挂掉
+2.2增加wifi状态切换权限，否则可能会挂掉,修改播放结束的显示ui
+
+2.3 未发布，为了处理音频播放，缺少状态，所以手动处理状态，将aliplayer的playstate字段改为共有，可以随意更改。
+这样如果是音频的话，监听到prepared就把状态改为playing，如下在回调中处理，回调以前只有播放器状态，这次两个状态都返回，可以自己做一些处理。
+@Override
+            public void playerState(int playerState,int playState) {
+                System.out.println("playerState================="+playState);
+                if(playState==AliVideoPlayer.STATE_PREPARED){
+                    aliVideoPlayer2.getmController().findViewById(R.id.image).setVisibility(View.VISIBLE);
+                    aliVideoPlayer2.mCurrentState=AliVideoPlayer.STATE_PLAYING;
+                    aliVideoPlayer2.getmController().setControllerState(AliVideoPlayer.PLAYER_NORMAL,AliVideoPlayer.STATE_PLAYING);
+                }
+            }
+
+
 未发布，左右滑动支持进度条功能
 
 terminal里运行命令gradle bintray 就可以了，如果成功，你就在bintray网站上看到自己的了
